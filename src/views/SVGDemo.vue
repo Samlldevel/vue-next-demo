@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" ref="root">
     <div class="luck-lottery">
       <svg
         class="svg-content"
@@ -68,9 +68,20 @@
   </div>
 </template>
 <script>
-import { reactive, computed, ref } from 'vue'
+import {
+  reactive,
+  computed,
+  ref,
+  watch,
+  onMounted,
+  onUpdated,
+  onUnmounted
+} from 'vue'
 export default {
-  setup() {
+  setup(props, context) {
+    console.log('props :>> ', props)
+    console.log('context :>> ', context)
+
     let time = 0,
       speed = 100,
       diff = 20
@@ -124,6 +135,29 @@ export default {
       let newArr = JSON.parse(JSON.stringify(lotteryList))
       newArr.splice(4, 0, { name: 'drawBtn' })
       return newArr
+    })
+
+    // 创建监视，并得到 停止函数
+    const stop = watch(
+      () => current.value,
+      value => {
+        console.log('value :>> ', value)
+        // 调用停止函数，清除对应的监视
+        if (value === 4) stop()
+      }
+    )
+
+    onMounted(() => {
+      console.log('mounted!')
+    })
+
+    onUpdated(() => {
+      console.log('updated!')
+    })
+
+    // destroyed 调整为 unmounted
+    onUnmounted(() => {
+      console.log('unmounted!')
     })
 
     const handleStart = () => {
